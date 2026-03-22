@@ -4,10 +4,10 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "postinstall": "npx prisma generate",
-    "start": "prisma generate && node server.js",
-    "server": "nodemon server.js"
-  },
+  "build": "prisma generate",
+  "start": "node server.js",
+  "server": "nodemon server.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -29,6 +29,7 @@
     "prisma": "^7.5.0"
   },
   "prisma": {
-    "config": "prisma/prisma.config.ts"
+    "config": "prisma/prisma.config.ts",
+    "schema": "prisma/schema.prisma"
   }
 }
