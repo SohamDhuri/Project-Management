@@ -17,6 +17,13 @@
             "dest": "server.js"
         }
     ],
-    "buildCommand": "npm run build"
+    
+    "buildCommand": "npm run build",
+    
+    "functions": {
+    "server.js": {
+      "includeFiles": "node_modules/.prisma/**"
+    }
+  }
 
 }
