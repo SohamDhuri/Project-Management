@@ -1,12 +1,22 @@
 import pkg from '@prisma/client';
-
 const { PrismaClient } = pkg;
+
+import { PrismaNeon } from '@prisma/adapter-neon';
+import { neonConfig } from '@neondatabase/serverless';
+import ws from 'ws';
+
+neonConfig.webSocketConstructor = ws;
+
+// ✅ pass connection string
+const adapter = new PrismaNeon({
+  connectionString: process.env.DATABASE_URL,
+});
 
 const globalForPrisma = globalThis;
 
 export const prisma =
   globalForPrisma.prisma ||
-  new PrismaClient();
+  new PrismaClient({ adapter });
 
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
