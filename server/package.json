@@ -4,7 +4,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "build": "prisma generate --config=prisma.config.ts",
+    "build": "prisma generate",
     "start": "node server.js",
     "server": "nodemon server.js"
   },
