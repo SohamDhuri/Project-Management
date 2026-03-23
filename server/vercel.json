@@ -21,8 +21,8 @@
     "buildCommand": "npm run build",
     
     "functions": {
-    "server.js": {
-      "includeFiles": "node_modules/.prisma/**"
+        "server.js": {
+            "includeFiles": "node_modules/.prisma/**"
     }
   }
 
