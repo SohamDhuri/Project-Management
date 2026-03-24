@@ -65,7 +65,7 @@ const syncUserUpdation = inngest.createFunction(
 );
 
 //Inngest Function to save data to a database
-const syncWorkspaceCreation = inggest.createFunction(
+const syncWorkspaceCreation = inngest.createFunction(
   {id: 'sync-workspace-from-clerk'},
   {event: 'clerk/organization.created'},
   async ({ event }) => {
