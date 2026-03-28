@@ -41,9 +41,9 @@ const Layout = () => {
         </div>
     )
 
-    if(user && workspaces.length === 0){
+    if(user && !loading && workspaces.length === 0){
         return(
-            <div className='min-h-scren flex justify-center items-center'>
+            <div className='min-h-screen flex justify-center items-center'>
                 <CreateOrganization />
             </div>
         )

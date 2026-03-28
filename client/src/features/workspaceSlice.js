@@ -26,7 +26,10 @@ const workspaceSlice = createSlice({
         },
         setCurrentWorkspace: (state, action) => {
             localStorage.setItem("currentWorkspaceId", action.payload);
-            state.currentWorkspace = state.workspaces.find((w) => w.id === action.payload);
+            const found = state.workspaces.find((w) => w.id === action.payload);
+            if(found){
+                state.currentWorkspace = found;
+            }
         },
         addWorkspace: (state, action) => {
             state.workspaces.push(action.payload);
@@ -47,7 +50,7 @@ const workspaceSlice = createSlice({
             }
         },
         deleteWorkspace: (state, action) => {
-            state.workspaces = state.workspaces.filter((w) => w._id !== action.payload);
+            state.workspaces = state.workspaces.filter((w) => w.id !== action.payload);
         },
         addProject: (state, action) => {
             state.currentWorkspace.projects.push(action.payload);
@@ -118,22 +121,20 @@ const workspaceSlice = createSlice({
         builder.addCase(fetchWorkspaces.pending, (state)=>{
             state.loading = true
         });
-        builder.addCase(fetchWorkspaces.fulfilled, (state, action)=>{
+        builder.addCase(fetchWorkspaces.fulfilled, (state, action) => {
             state.workspaces = action.payload;
-            if(action.payload.length > 0){
-                const localStorageCurrentWorkspaceId = localStorage.getItem('currentWorkspaceId');
-                if(localStorageCurrentWorkspaceId){
-                    const findWorkspace = action.payload.find((w)=> w.id === localStorageCurrentWorkspaceId);
-                    if(findWorkspace){
-                        state.currentWorkspace = findWorkspace
-                    }else{
-                        state.currentWorkspace = action.payload[0]
-                    }
-                }else{
-                    state.currentWorkspace = action.payload[0]
-                }
+
+            if (action.payload.length > 0) {
+                const savedId = localStorage.getItem("currentWorkspaceId");
+
+                const found = action.payload.find((w) => w.id === savedId);
+
+                state.currentWorkspace = found || action.payload[0];
+            } else {
+                state.currentWorkspace = null;
             }
-            state.loading = false
+
+            state.loading = false;
         });
         builder.addCase(fetchWorkspaces.rejected, (state)=>{
             state.loading = false
