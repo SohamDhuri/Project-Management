@@ -18,14 +18,22 @@ const Layout = () => {
     // Initial load of theme
     useEffect(() => {
         dispatch(loadTheme())
-    }, [])
+    }, [dispatch])
 
     //Initial load of workspaces
     useEffect(() => {
-        if(isLoaded && user){
+        if(isLoaded && user?.id){
             dispatch(fetchWorkspaces({getToken}))
         }
-    },[user,isLoaded])
+    },[dispatch, user?.id, isLoaded, getToken])
+
+    if (!isLoaded) {
+        return (
+            <div className='flex items-center justify-center h-screen bg-white dark:bg-zinc-950'>
+                <Loader2Icon className="size-7 text-blue-500 animate-spin" />
+            </div>
+        )
+    }
 
     if(!user){
         return(

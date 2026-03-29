@@ -3,14 +3,13 @@ import { ChevronDown, Check, Plus } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentWorkspace } from "../features/workspaceSlice";
 import { useNavigate } from "react-router-dom";
-import { useOrganizationList } from "@clerk/react";
-import {useClerk} from "@clerk/react";
+import { useOrganization, useOrganizationList, useClerk } from "@clerk/react";
 
 function WorkspaceDropdown() {
 
+    const { organization } = useOrganization();
     const {setActive, userMemberships, isLoaded} = useOrganizationList({userMemberships: true})
-
-    const {openCreationOrganization} = useClerk()
+    const {openCreateOrganization} = useClerk()
     const { workspaces } = useSelector((state) => state.workspace);
     const currentWorkspace = useSelector((state) => state.workspace?.currentWorkspace || null);
     const [isOpen, setIsOpen] = useState(false);
@@ -38,10 +37,10 @@ function WorkspaceDropdown() {
     }, []);
 
     useEffect(()=>{
-        if(currentWorkspace && isLoaded){
+        if(currentWorkspace?.id && isLoaded && organization?.id !== currentWorkspace.id){
             setActive({organization: currentWorkspace.id})
         }
-    },[currentWorkspace, isLoaded])
+    },[currentWorkspace?.id, isLoaded, organization?.id, setActive])
 
     return (
         <div className="relative m-4" ref={dropdownRef}>
@@ -86,7 +85,7 @@ function WorkspaceDropdown() {
 
                     <hr className="border-gray-200 dark:border-zinc-700" />
 
-                    <div onClick={()=>{openCreationOrganization(); setIsOpen(false)}} 
+                    <div onClick={()=>{openCreateOrganization(); setIsOpen(false);}} 
                         className="p-2 cursor-pointer rounded group hover:bg-gray-100 dark:hover:bg-zinc-800" >
                             <p className="flex items-center text-xs gap-2 my-1 w-full text-blue-600 dark:text-blue-400 group-hover:text-blue-500 dark:group-hover:text-blue-300">
                                 <Plus className="w-4 h-4" /> Create Workspace
