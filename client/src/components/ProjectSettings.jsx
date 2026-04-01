@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import AddProjectMember from "./AddProjectMember";
 import { useDispatch } from "react-redux";
 import { useAuth } from "@clerk/react";
-import { api } from "../configs/api"
+import api from "../configs/api";
+import toast from "react-hot-toast";
+
 
 export default function ProjectSettings({ project }) {
 
@@ -29,7 +31,7 @@ export default function ProjectSettings({ project }) {
         setIsSubmitting(true)
         toast.loading("Saving...")
         try{
-            const {data} = await api.put('/api/projects', formData, {headers:{Authorization: `Bearers ${await getToken()}`}})
+            const {data} = await api.put('/api/projects', formData, {headers:{Authorization: `Bearer ${await getToken()}`}})
             setIsDialogOpen(false)
             dispatch(fetchWorspaces({getToken}))
             toast.dismissAll();

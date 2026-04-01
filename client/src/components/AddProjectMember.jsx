@@ -3,7 +3,9 @@ import { Mail, UserPlus } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "@clerk/react";
-import { api } from "../configs/api"
+import api from "../configs/api";
+import toast from "react-hot-toast";
+import { fetchWorkspaces } from "../features/workspaceSlice";
 
 const AddProjectMember = ({ isDialogOpen, setIsDialogOpen }) => {
 
@@ -12,7 +14,7 @@ const AddProjectMember = ({ isDialogOpen, setIsDialogOpen }) => {
     const id = searchParams.get('id');
 
     const {getToken} = useAuth()
-    const dispatch = useDispatch
+    const dispatch = useDispatch()
 
     const currentWorkspace = useSelector((state) => state.workspace?.currentWorkspace || null);
 
