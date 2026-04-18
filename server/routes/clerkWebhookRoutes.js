@@ -7,6 +7,54 @@ router.post("/", async (req, res) => {
   try {
     const evt = req.body;
 
+    if (evt.type === "user.created") {
+      const data = evt.data;
+
+      await prisma.user.upsert({
+        where: { id: data.id },
+        update: {
+          name: `${data.first_name || ""} ${data.last_name || ""}`.trim() || "User",
+          email: data.email_addresses?.[0]?.email_address || `temp-${data.id}@example.com`,
+          image: data.image_url || "",
+        },
+        create: {
+          id: data.id,
+          name: `${data.first_name || ""} ${data.last_name || ""}`.trim() || "User",
+          email: data.email_addresses?.[0]?.email_address || `temp-${data.id}@example.com`,
+          image: data.image_url || "",
+        },
+      });
+
+      console.log("User synced:", data.id);
+    }
+
+    if (evt.type === "user.updated") {
+      const data = evt.data;
+
+      await prisma.user.update({
+        where: { id: data.id },
+        data: {
+          name: `${data.first_name || ""} ${data.last_name || ""}`.trim() || "User",
+          email: data.email_addresses?.[0]?.email_address || `temp-${data.id}@example.com`,
+          image: data.image_url || "",
+        },
+      }).catch(() => null);
+
+      console.log("User updated:", data.id);
+    }
+
+    if (evt.type === "user.deleted") {
+      const data = evt.data;
+
+      if (data?.id) {
+        await prisma.user.delete({
+          where: { id: data.id },
+        }).catch(() => null);
+
+        console.log("User deleted:", data.id);
+      }
+    }
+
     if (evt.type === "organization.created") {
       const data = evt.data;
 
@@ -15,7 +63,7 @@ router.post("/", async (req, res) => {
         update: {},
         create: {
           id: data.created_by,
-          name: data.name || "Workspace Owner",
+          name: "Workspace Owner",
           email: `temp-${data.created_by}@example.com`,
           image: "",
         },
@@ -53,48 +101,32 @@ router.post("/", async (req, res) => {
         },
       });
 
-      console.log("Workspace synced successfully:", data.name);
+      console.log("Workspace synced:", data.name);
     }
 
     if (evt.type === "organization.updated") {
       const data = evt.data;
 
-      const existingWorkspace = await prisma.workspace.findUnique({
+      await prisma.workspace.update({
         where: { id: data.id },
-      });
+        data: {
+          name: data.name,
+          slug: data.slug,
+          image_url: data.image_url || "",
+        },
+      }).catch(() => null);
 
-      if (existingWorkspace) {
-        await prisma.workspace.update({
-          where: { id: data.id },
-          data: {
-            name: data.name,
-            slug: data.slug,
-            image_url: data.image_url || "",
-          },
-        });
-
-        console.log("Workspace updated successfully:", data.name);
-      } else {
-        console.log("Workspace not found for organization.updated:", data.id);
-      }
+      console.log("Workspace updated:", data.id);
     }
 
     if (evt.type === "organization.deleted") {
       const data = evt.data;
 
-      const existingWorkspace = await prisma.workspace.findUnique({
+      await prisma.workspace.delete({
         where: { id: data.id },
-      });
+      }).catch(() => null);
 
-      if (existingWorkspace) {
-        await prisma.workspace.delete({
-          where: { id: data.id },
-        });
-
-        console.log("Workspace deleted successfully:", data.id);
-      } else {
-        console.log("Workspace not found for organization.deleted:", data.id);
-      }
+      console.log("Workspace deleted:", data.id);
     }
 
     res.status(200).json({ received: true });
