@@ -71,7 +71,6 @@ export const createTask = async (req, res) => {
       },
     });
 
-    // Optional Inngest event
     await inngest.send({
       name: "task/task.created",
       data: {
@@ -90,6 +89,66 @@ export const createTask = async (req, res) => {
     });
   } catch (error) {
     console.error("Create Task Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
+
+// Update Task
+export const updateTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, type, status, priority, assigneeId, due_date } =
+      req.body;
+
+    const updatedTask = await prisma.task.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        type,
+        status,
+        priority,
+        due_date: due_date ? new Date(due_date) : undefined,
+        assignee: assigneeId
+          ? {
+              connect: { id: assigneeId },
+            }
+          : undefined,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Task updated successfully",
+      task: updatedTask,
+    });
+  } catch (error) {
+    console.error("Update Task Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
+
+// Delete Task
+export const deleteTask = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    await prisma.task.delete({
+      where: { id },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Task deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Task Error:", error);
     return res.status(500).json({
       success: false,
       message: error.message || "Internal Server Error",
