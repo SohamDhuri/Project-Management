@@ -29,8 +29,10 @@ const TaskDetails = () => {
         if(!taskId) return
         try{
             const token = await getToken()
-            const data = await api.get(`/api/comments/${taskId}`, {headers: {Authorization: `Bearer ${token}`}})
-            setComments(data.comments || [])
+            const { data } = await api.get(`/api/comments/${taskId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+                });
+            setComments(data.comments || []);
         }catch(error){
             toast.error(error?.response?.data?.message || error.message)
         }
