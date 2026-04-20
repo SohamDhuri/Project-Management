@@ -133,7 +133,13 @@ export default function ProjectDetail() {
             </div>
 
             {/* Create Task Modal */}
-            {showCreateTask && <CreateTaskDialog showCreateTask={showCreateTask} setShowCreateTask={setShowCreateTask} projectId={id} />}
+            {showCreateTask && (
+                <CreateTaskDialog
+                    showCreateTask={showCreateTask}
+                    setShowCreateTask={setShowCreateTask}
+                    projectId={project?.id}
+                />
+                )}
         </div>
     );
 }
