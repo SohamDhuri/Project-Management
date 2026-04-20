@@ -36,7 +36,7 @@ const RecentActivity = () => {
     return (
         <div className="bg-white dark:bg-zinc-950 dark:bg-gradient-to-br dark:from-zinc-800/70 dark:to-zinc-900/50 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 rounded-lg transition-all overflow-hidden">
             <div className="border-b border-zinc-200 dark:border-zinc-800 p-4">
-                <h2 className="text-lg text-zinc-800 dark:text-zinc-200">Recent Activity</h2>
+                <h2 className="text-lg text-gray-900 dark:text-zinc-200">Recent Activity</h2>
             </div>
 
             <div className="p-0">
@@ -61,7 +61,7 @@ const RecentActivity = () => {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-start justify-between mb-2">
-                                                <h4 className="text-zinc-800 dark:text-zinc-200 truncate">
+                                                <h4 className="text-gray-900 dark:text-zinc-200 truncate">
                                                     {task.title}
                                                 </h4>
                                                 <span className={`ml-2 px-2 py-1 rounded text-xs ${statusColors[task.status] || "bg-zinc-300 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300"}`}>

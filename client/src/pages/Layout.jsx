@@ -14,11 +14,18 @@ const Layout = () => {
     const dispatch = useDispatch()
     const {user, isLoaded} = useUser()
     const {getToken} = useAuth()
+    const theme = useSelector((state) => state.theme.theme);
 
-    // Initial load of theme
     useEffect(() => {
-        dispatch(loadTheme())
-    }, [dispatch])
+    localStorage.setItem("theme", theme);
+
+    if (theme === "dark") {
+        document.documentElement.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+    }
+    }, [theme]);
+
 
     //Initial load of workspaces
     useEffect(() => {
@@ -49,16 +56,13 @@ const Layout = () => {
         </div>
     )
 
-    if(user && !loading && workspaces.length === 0){
-        return(
-            <div className='min-h-screen flex justify-center items-center'>
-                <CreateOrganization
-                    afterCreateOrganizationUrl="/"
-                    skipInvitationScreen={true}
-                />
-            </div>
-        )
-    }
+    if (user && !loading && workspaces.length === 0) {
+    return (
+        <div className='flex items-center justify-center h-screen bg-white dark:bg-zinc-950'>
+            <p className='text-gray-600 dark:text-zinc-300'>Loading workspace...</p>
+        </div>
+    )
+    }   
 
     return (
         <div className="flex bg-white dark:bg-zinc-950 text-gray-900 dark:text-slate-100">
