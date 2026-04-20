@@ -2,6 +2,10 @@ import prisma from "../configs/prisma.js";
 import { inngest } from "../inngest/index.js";
 
 // Create Task
+import prisma from "../configs/prisma.js";
+import { inngest } from "../inngest/index.js";
+
+// Create Task
 export const createTask = async (req, res) => {
   try {
     const { userId } = await req.auth();
@@ -18,7 +22,13 @@ export const createTask = async (req, res) => {
 
     const origin = req.get("origin");
 
-    // Check if project exists and load members
+    if (!projectId || !title || !assigneeId || !due_date) {
+      return res.status(400).json({
+        success: false,
+        message: "projectId, title, assigneeId and due_date are required",
+      });
+    }
+
     const project = await prisma.project.findUnique({
       where: { id: projectId },
       include: {
@@ -31,56 +41,61 @@ export const createTask = async (req, res) => {
     });
 
     if (!project) {
-      return res.status(404).json({ message: "Project not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
     }
 
-    // Check admin/team lead permission
     if (project.team_lead !== userId) {
-      return res
-        .status(403)
-        .json({ message: "You don't have admin privileges for this project" });
+      return res.status(403).json({
+        success: false,
+        message: "You don't have admin privileges for this project",
+      });
     }
 
-    // Check assignee belongs to project
-    if (
-      assigneeId &&
-      !project.members.find((member) => member.user.id === assigneeId)
-    ) {
-      return res
-        .status(404)
-        .json({ message: "Assignee is not a member of this project" });
+    const isMember = project.members.find(
+      (member) => member.user.id === assigneeId
+    );
+
+    if (!isMember) {
+      return res.status(404).json({
+        success: false,
+        message: "Assignee is not a member of this project",
+      });
     }
 
-    // Create task
     const task = await prisma.task.create({
       data: {
+        project: {
+          connect: { id: projectId },
+        },
         title,
         description,
         type,
         status,
         priority,
-        due_date: due_date ? new Date(due_date) : null,
-        project: {
-          connect: { id: projectId },
+        due_date: new Date(due_date),
+        assignee: {
+          connect: { id: assigneeId },
         },
-        assignee: assigneeId
-          ? {
-              connect: { id: assigneeId },
-            }
-          : undefined,
       },
     });
 
-    await inngest.send({
-      name: "task/task.created",
-      data: {
-        taskId: task.id,
-        title: task.title,
-        projectId,
-        assigneeId: assigneeId || null,
-        origin,
-      },
-    });
+    try {
+      await inngest.send({
+        name: "task/task.created",
+        data: {
+          taskId: task.id,
+          title: task.title,
+          projectId,
+          assigneeId,
+          origin,
+        },
+      });
+    } catch (inngestError) {
+      console.error("Inngest Error:", inngestError);
+    }
 
     return res.status(201).json({
       success: true,
