@@ -59,8 +59,8 @@ const CreateProjectDialog = ({ isDialogOpen, setIsDialogOpen }) => {
     if (!isDialogOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur flex items-center justify-center text-left z-50">
-            <div className="bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 w-full max-w-lg text-gray-900 dark:text-zinc-200 relative">
+        <div className="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur flex items-start justify-center text-left z-50 overflow-y-auto p-4 sm:p-6">
+            <div className="bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 w-full max-w-lg text-gray-900 dark:text-zinc-200 relative my-6 max-h-[90vh] overflow-y-auto">
                 <button
                     className="absolute top-3 right-3 text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200"
                     onClick={() => setIsDialogOpen(false)}
