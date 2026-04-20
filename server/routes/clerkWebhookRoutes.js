@@ -16,23 +16,19 @@ router.post("/", async (req, res) => {
         where: { id: data.id },
         update: {
           name: `${data.first_name || ""} ${data.last_name || ""}`.trim() || "User",
-          email:
-            data.email_addresses?.[0]?.email_address ||
-            `temp-${data.id}@example.com`,
+          email: data.email_addresses?.[0]?.email_address || `temp-${data.id}@example.com`,
           image: data.image_url || "",
         },
         create: {
           id: data.id,
           name: `${data.first_name || ""} ${data.last_name || ""}`.trim() || "User",
-          email:
-            data.email_addresses?.[0]?.email_address ||
-            `temp-${data.id}@example.com`,
+          email: data.email_addresses?.[0]?.email_address || `temp-${data.id}@example.com`,
           image: data.image_url || "",
         },
       });
+    }
 
       console.log("User synced:", data.id);
-    }
 
     if (evt.type === "user.updated") {
       await prisma.user
@@ -69,11 +65,11 @@ router.post("/", async (req, res) => {
         update: {},
         create: {
           id: data.created_by,
-          name: "Workspace Owner",
+          name: "User",
           email: `temp-${data.created_by}@example.com`,
           image: "",
         },
-      });
+});
 
       await prisma.workspace.upsert({
         where: { id: data.id },
