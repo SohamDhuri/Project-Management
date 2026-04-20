@@ -7,6 +7,7 @@ import { loadTheme } from '../features/themeSlice'
 import { Loader2Icon } from 'lucide-react'
 import {useUser, SignIn, useAuth, CreateOrganization} from '@clerk/react'
 import { setWorkspaces, fetchWorkspaces } from '../features/workspaceSlice'
+import { useOrganizationList } from '@clerk/react'
 
 const Layout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -15,6 +16,9 @@ const Layout = () => {
     const {user, isLoaded} = useUser()
     const {getToken} = useAuth()
     const theme = useSelector((state) => state.theme.theme);
+    const { isLoaded: orgLoaded, userMemberships } = useOrganizationList({
+        userMemberships: true,
+    });
 
     useEffect(() => {
     localStorage.setItem("theme", theme);
@@ -57,12 +61,39 @@ const Layout = () => {
     )
 
     if (user && !loading && workspaces.length === 0) {
-    return (
+        return (
         <div className='flex items-center justify-center h-screen bg-white dark:bg-zinc-950'>
             <p className='text-gray-600 dark:text-zinc-300'>Loading workspace...</p>
         </div>
-    )
+        )
     }   
+
+    if (!isLoaded || loading || !orgLoaded) {
+        return (
+            <div className='flex items-center justify-center h-screen bg-white dark:bg-zinc-950'>
+                <Loader2Icon className="size-7 text-blue-500 animate-spin" />
+            </div>
+        )
+    }
+
+    if (!user) {
+        return (
+            <div className='flex justify-center items-center h-screen bg-white dark:bg-zinc-950'>
+                <SignIn />
+            </div>
+        )
+    }
+
+    if (userMemberships?.data?.length === 0 && workspaces.length === 0) {
+        return (
+            <div className='min-h-screen flex justify-center items-center'>
+                <CreateOrganization
+                    afterCreateOrganizationUrl="/"
+                    skipInvitationScreen={true}
+                />
+            </div>
+        )
+    }
 
     return (
         <div className="flex bg-white dark:bg-zinc-950 text-gray-900 dark:text-slate-100">
