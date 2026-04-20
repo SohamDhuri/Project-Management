@@ -77,6 +77,11 @@ export const createTask = async (req, res) => {
         },
         due_date: new Date(due_date),
       },
+      include: {
+        assignee: true,
+        comments: true,
+        project: true,
+      },
     });
 
     try {
