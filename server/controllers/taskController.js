@@ -2,10 +2,6 @@ import prisma from "../configs/prisma.js";
 import { inngest } from "../inngest/index.js";
 
 // Create Task
-import prisma from "../configs/prisma.js";
-import { inngest } from "../inngest/index.js";
-
-// Create Task
 export const createTask = async (req, res) => {
   try {
     const { userId } = await req.auth();
@@ -67,18 +63,18 @@ export const createTask = async (req, res) => {
 
     const task = await prisma.task.create({
       data: {
-        project: {
-          connect: { id: projectId },
-        },
         title,
         description,
         type,
         status,
         priority,
-        due_date: new Date(due_date),
+        project: {
+          connect: { id: projectId },
+        },
         assignee: {
           connect: { id: assigneeId },
         },
+        due_date: new Date(due_date),
       },
     });
 
@@ -126,12 +122,12 @@ export const updateTask = async (req, res) => {
         type,
         status,
         priority,
-        due_date: due_date ? new Date(due_date) : undefined,
         assignee: assigneeId
           ? {
               connect: { id: assigneeId },
             }
           : undefined,
+        due_date: due_date ? new Date(due_date) : undefined,
       },
     });
 
