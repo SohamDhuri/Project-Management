@@ -13,11 +13,24 @@ import clerkWebhookRouter from "./routes/clerkWebhookRoutes.js";
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.CLIENT_URL,
+];
+
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
 app.use(clerkMiddleware());
 
 app.get("/", (req, res) => res.send("Server is Live!"));
+
 app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/workspaces", protect, workspaceRouter);
 app.use("/api/projects", protect, projectRouter);
