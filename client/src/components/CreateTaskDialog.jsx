@@ -31,6 +31,11 @@ export default function CreateTaskDialog({ showCreateTask, setShowCreateTask, pr
         e.preventDefault();
         setIsSubmitting(true)
         try{
+            console.log("Sending task payload:", {
+                ...formData,
+                workspaceId: currentWorkspace?.id,
+                projectId,
+            });
             const {data} = await api.post('/api/task', {...formData, workspaceId: currentWorkspace.id, projectId},
                 {headers: {Authorization: `Bearer ${await getToken()}`}})
                 setShowCreateTask(false)

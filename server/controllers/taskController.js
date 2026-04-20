@@ -15,6 +15,7 @@ export const createTask = async (req, res) => {
       assigneeId,
       due_date,
     } = req.body;
+    console.log("req.body:", req.body);
 
     const origin = req.get("origin");
 
